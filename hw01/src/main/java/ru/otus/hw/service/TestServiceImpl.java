@@ -17,13 +17,13 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public void executeTest() {
-        //Получение вопросов из Dao
+
         List<Question> questionsList = questionDao.findAll();
-        //ioService.printLine("");
+
         ioService.printFormattedLine("Please answer the questions below%n");
 
         int numberQuestion = 0;
-        // Вывод вопросов с вариантами ответов
+
         for (Question quest:questionsList) {
             numberQuestion = numberQuestion + 1;
             ioService.printLine(numberQuestion + ". " + quest.getQuestionCsv());
