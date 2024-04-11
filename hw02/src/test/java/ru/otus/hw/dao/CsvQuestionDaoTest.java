@@ -30,13 +30,9 @@ public class CsvQuestionDaoTest {
         listAnswerForQuestion.add(new Answer("Yes", true));
         listAnswerForQuestion.add(new Answer("No", false));
 
-        List<Answer> listAnswerForSecondQuestion = new ArrayList<>();
-        listAnswerForSecondQuestion.add(new Answer("Yes", false));
-        listAnswerForSecondQuestion.add(new Answer("No", true));
-
         questionList = new ArrayList<>();
         questionList.add(new Question("In school, Albert Einstein failed most of the subjects, except for physics and math?", listAnswerForQuestion));
-        questionList.add(new Question("The Beatles is a famous rock band from Manchester, the United Kingdom?", listAnswerForSecondQuestion));
+        questionList.add(new Question("question 2", listAnswerForQuestion));
     }
 
     @DisplayName("Корректное получение вопросов")

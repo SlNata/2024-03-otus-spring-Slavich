@@ -35,13 +35,9 @@ class TestServiceImplTest {
         listAnswerForQuestion.add(new Answer("Yes", true));
         listAnswerForQuestion.add(new Answer("No", false));
 
-        List<Answer> listAnswerForSecondQuestion = new ArrayList<>();
-        listAnswerForSecondQuestion.add(new Answer("Yes", false));
-        listAnswerForSecondQuestion.add(new Answer("No", true));
-
         List<Question> questionList = new ArrayList<>();
         questionList.add(new Question("In school, Albert Einstein failed most of the subjects, except for physics and math?", listAnswerForQuestion));
-        questionList.add(new Question("The Beatles is a famous rock band from Manchester, the United Kingdom?", listAnswerForSecondQuestion));
+        questionList.add(new Question("question 2", listAnswerForQuestion));
 
         Mockito.when(questionDao.findAll()).thenReturn(questionList);
     }
@@ -56,5 +52,6 @@ class TestServiceImplTest {
 
         assertThat(testResult.getStudent()).isNotNull().isEqualTo(student);
         assertThat(testResult.getAnsweredQuestions().size()).isEqualTo(2);
+        assertThat(testResult.getRightAnswersCount()).isEqualTo(1);
     }
 }
