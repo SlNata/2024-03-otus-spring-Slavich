@@ -18,7 +18,7 @@ public class Comment {
 
     private String textComment;
 
-    @DBRef
+    @DBRef(lazy = true)
     private Book book;
 
 }
