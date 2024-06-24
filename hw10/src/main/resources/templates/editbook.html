@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit books</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+
+        .books {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .books tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .books td:last-child, td:first-child {
+            width: 50px;
+        }
+    </style>
+
+</head>
+<body>
+
+<form id="edit-form" action="editbook.html" th:object="${updateBook}">
+    <h3>Book Edit:</h3>
+
+    <div class="row">
+        <label for="id-input">ID:</label>
+        <input id="id-input" type="text" readonly="readonly" th:value="*{id}" value="default"/>
+    </div>
+
+    <div class="row">
+        <label for="title-input">Title:</label>
+        <input id="title-input" name="title" type="text" th:value="*{title}" value="default"/>
+    </div>
+
+    <div class="row">
+        <label for="author-list">Author Name:</label>
+        <select id="author-list" th:field="${updateBook.authorId}">
+            <option th:each="author: ${authorsList}" th:value="${author.id}" th:text="${author.fullName}"></option>
+        </select>
+    </div>
+
+    <div class="row">
+        <label for="genre-list">Genres:</label>
+        <select id="genre-list" th:field="${updateBook.genreId}">
+            <option th:each="genre: ${genresList}" th:value="${genre.id}" th:text="${genre.name}"></option>
+        </select>
+    </div>
+
+    <div class="row">
+        <button type="button" onclick="saveBook()">Save</button>
+        <a href="listbooks.html" th:href="@{/}"><button type="button">Cancel</button></a>
+    </div>
+</form>
+<script>
+    function saveBook() {
+        const bookId = document.getElementById("id-input")
+        const bookTitle = document.getElementById("title-input")
+        const bookAuthorId = document.getElementById("author-list")
+        const bookGenreId = document.getElementById("genre-list")
+
+        const book = { id: bookId.value,
+                       title: bookTitle.value,
+                       authorId: bookAuthorId.value,
+                       genreId: bookGenreId.value }
+        fetch("/api/allbooks",{
+            method: 'PATCH',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(book)})
+        .then(response => window.location.href = '/')
+    }
+</script>
+<h3>Comments:</h3>
+
+<table class="books" id="all-comments-table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Text Comment</th>
+    </tr>
+    </thead>
+</table>
+
+<script>
+    function getAllComments() {
+    const bookId = document.getElementById("id-input")
+        const commentTable = document.getElementById("all-comments-table")
+        var commentTbody = ``
+        fetch("/api/allcomments/" + bookId.value , {
+            method: 'GET'})
+        .then(rawResponse => rawResponse.json())
+        .then(json => json.forEach(comment => {
+            commentTbody = `<tr>`;
+            commentTbody += `<td>` + comment.id + `</td>`;
+            commentTbody += `<td>` + comment.textComment + `</td>`;
+            commentTbody += `</tr>`;
+            commentTable.innerHTML += commentTbody;}))
+    };
+    window.onload = getAllComments;
+</script>
+
+</body>
+</html>
