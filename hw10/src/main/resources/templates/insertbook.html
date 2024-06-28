@@ -62,7 +62,7 @@
         const book = { title: bookTitle.value,
                        authorId: bookAuthorId.value,
                        genreId: bookGenreId.value }
-        fetch("/api/allbooks",{
+        fetch("/api/books",{
             method: 'POST',
             headers: {
               'Accept': 'application/json',

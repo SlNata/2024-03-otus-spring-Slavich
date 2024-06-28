@@ -47,7 +47,7 @@
     function getAllBooks() {
         const bookTable = document.getElementById("all-books-table")
         var bookTbody = ``
-        fetch("api/allbooks", {
+        fetch("api/books", {
             method: 'GET'})
         .then(rawResponse => rawResponse.json())
         .then(json => json.forEach(book => {

@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookUpdateDto;
+import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.models.Book;
-import ru.otus.hw.models.Comment;
 import ru.otus.hw.services.BookService;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.services.CommentService;
@@ -26,18 +26,18 @@ public class BookRestController {
 
     private final CommentService commentService;
 
-    @GetMapping("/api/allbooks")
+    @GetMapping("/api/books")
     public List<BookDto> listAllBooks() {
         return bookService.findAll();
     }
 
-    @GetMapping("/api/allbooks/{id}")
+    @GetMapping("/api/books/{id}")
     public BookDto getBookById(@PathVariable("id") long id) {
         Book book = bookService.findById(id).orElseThrow(EntityNotFoundException::new);
         return BookDto.toBookDto(book);
     }
 
-    @PatchMapping("/api/allbooks")
+    @PatchMapping("/api/books")
     public BookDto updateBookById(@RequestBody BookUpdateDto bookUpdateDto) {
             Book book = bookService.update(bookUpdateDto.getId(),
                     bookUpdateDto.getTitle(),
@@ -46,21 +46,20 @@ public class BookRestController {
             return BookDto.toBookDto(book);
     }
 
-    @PostMapping("/api/allbooks")
+    @PostMapping("/api/books")
     public BookDto insertNewBook(@RequestBody BookUpdateDto bookUpdateDto) {
         Book book = bookService.insert(bookUpdateDto.getTitle(),
                 bookUpdateDto.getAuthorId(), bookUpdateDto.getGenreId());
         return BookDto.toBookDto(book);
     }
 
-    @DeleteMapping("/api/allbooks/{id}")
+    @DeleteMapping("/api/books/{id}")
     public void deleteBook(@PathVariable("id") long id) {
         bookService.deleteById(id);
     }
 
-    @GetMapping("/api/allcomments/{id}")
-    public List<Comment> getCommentsBookById(@PathVariable(name = "id") long id) {
-        Book book = bookService.findById(id).orElseThrow(EntityNotFoundException::new);
+    @GetMapping("/api/books/{id}/comments")
+    public List<CommentDto> getCommentsBookById(@PathVariable(name = "id") long id) {
         return commentService.findAllByBookId(id);
     }
 }

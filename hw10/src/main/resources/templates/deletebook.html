@@ -41,7 +41,7 @@
 <script>
     function deleteBook() {
         const bookId = document.getElementById("id-input")
-        fetch("/api/allbooks/" + bookId.value ,{
+        fetch("/api/books/" + bookId.value ,{
             method: 'DELETE'})
         .then(response => {
             if (response.status == "200")

@@ -83,7 +83,7 @@
                        title: bookTitle.value,
                        authorId: bookAuthorId.value,
                        genreId: bookGenreId.value }
-        fetch("/api/allbooks",{
+        fetch("/api/books",{
             method: 'PATCH',
             headers: {
               'Accept': 'application/json',
@@ -109,7 +109,7 @@
     const bookId = document.getElementById("id-input")
         const commentTable = document.getElementById("all-comments-table")
         var commentTbody = ``
-        fetch("/api/allcomments/" + bookId.value , {
+        fetch("/api/books/" + bookId.value + "/comments", {
             method: 'GET'})
         .then(rawResponse => rawResponse.json())
         .then(json => json.forEach(comment => {

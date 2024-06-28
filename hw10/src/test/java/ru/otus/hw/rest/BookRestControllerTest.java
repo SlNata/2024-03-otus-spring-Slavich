@@ -9,8 +9,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookUpdateDto;
+import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
+import ru.otus.hw.models.Comment;
 import ru.otus.hw.models.Genre;
 import ru.otus.hw.services.BookService;
 import ru.otus.hw.services.CommentService;
@@ -50,7 +52,7 @@ public class BookRestControllerTest {
                 new Genre(1L, "Genre_1")));
         given(bookService.findAll()).willReturn(bookList);
         List<BookDto> expectedBook = bookList.stream().toList();
-        mockMvc.perform(get("/api/allbooks"))
+        mockMvc.perform(get("/api/books"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(expectedBook)));
@@ -61,7 +63,7 @@ public class BookRestControllerTest {
     public void shouldReturnErrorWhenDisplayBookList() throws Exception {
         given(bookService.findAll()).willThrow(RuntimeException.class);
 
-        mockMvc.perform(get("/api/allbooks"))
+        mockMvc.perform(get("/api/books"))
                 .andExpect(status().isInternalServerError())
                 .andDo(print());
     }
@@ -78,7 +80,7 @@ public class BookRestControllerTest {
 
         BookUpdateDto updatedBook = BookUpdateDto.toBookUpdateDto(book);
 
-        mockMvc.perform(patch("/api/allbooks")
+        mockMvc.perform(patch("/api/books")
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(updatedBook)))
                 .andExpect(status().isOk())
@@ -95,7 +97,7 @@ public class BookRestControllerTest {
                 .willReturn(book);
 
         BookUpdateDto updateBook = BookUpdateDto.toBookUpdateDto(book);
-        mockMvc.perform(post("/api/allbooks")
+        mockMvc.perform(post("/api/books")
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(updateBook)))
                 .andExpect(status().isOk())
@@ -105,7 +107,18 @@ public class BookRestControllerTest {
     @DisplayName("Должен успешно удалить книгу")
     @Test
     public void shouldCorrectDeleteBookById() throws Exception {
-        mockMvc.perform(delete("/api/allbooks/{id}", 2L))
+        mockMvc.perform(delete("/api/books/{id}", 2L))
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("Должен успешно отобразить комментарии к книге")
+    @Test
+    public void shouldCorrectFindCommentById() throws Exception {
+        List<CommentDto> commentList = List.of(new CommentDto(2L, "Comment_2"));
+
+        given(commentService.findAllByBookId(2L)).willReturn(commentList);
+
+        mockMvc.perform(get("/api/books/2/comments"))
                 .andExpect(status().isOk());
     }
 }
