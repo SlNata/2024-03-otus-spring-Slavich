@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Delete book</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<form id="delete-form" action="deletebook.html" >
+    <h3>Book Delete:</h3>
+
+    <div class="row">
+        <label for="id-input">ID:</label>
+        <input id="id-input" type="text" readonly="readonly"/>
+    </div>
+
+    <div class="row">
+        <button type="button" onclick="deleteBook()">Delete</button>
+        <a href="listbooks.html" th:href="@{/}"><button type="button">Cancel</button></a>
+    </div>
+</form>
+
+<script>
+    window.onload = async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookIdParam = urlParams.get('id');
+
+        const book = await fetchBookById(bookIdParam);
+        const bookId = document.getElementById("id-input")
+        bookId.value = book.id
+    }
+
+    async function fetchBookById(id) {
+        const response = await fetch("/api/books/" + id);
+        const book = await response.json();
+        return book;
+    }
+
+   async function deleteBook() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookIdParam = urlParams.get('id');
+
+        const bookId = document.getElementById("id-input").value
+        fetch("/api/books/" + bookIdParam ,{
+            method: 'DELETE'})
+        .then(response => {
+            if (response.status == "200")
+                window.location.href = '/';
+            if (response.status == "500")
+                err.innerHTML = "Book not found with id=" + bookId;
+        })
+   }
+</script>
+</body>
+</html>
