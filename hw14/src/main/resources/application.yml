@@ -1,0 +1,47 @@
+spring:
+  main:
+    allow-circular-references: true
+
+  sql:
+    init:
+      mode: always
+      data-locations: data.sql
+      schema-locations: schema.sql
+
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  batch:
+    job:
+      enabled: false
+
+  shell:
+    interactive:
+      enabled: true
+    noninteractive:
+      enabled: false
+
+    command:
+      version:
+        enabled: false
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: library
+
+  datasource:
+    url: jdbc:h2:mem:maindb
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
