@@ -7,4 +7,4 @@ FROM bellsoft/liberica-openjdk-alpine:17
 ARG JAR_NAME="hw17-1.0.jar"
 COPY --from=builder /usr/src/app/target/$JAR_NAME /usr/app/$JAR_NAME
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/usr/app/hw17.jar"]
+ENTRYPOINT ["java", "-jar", "/usr/app/hw17-1.0.jar"]
