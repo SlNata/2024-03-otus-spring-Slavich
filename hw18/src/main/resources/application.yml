@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:maindb
+  sql:
+    init:
+      mode: always
+
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        slidingWindowSize: 3
+        permittedNumberOfCallsInHalfOpenState: 3
+        slowCallDurationThreshold: 2s
+        slowCallRateThreshold: 10
+        failureRateThreshold: 3
+        waitDurationInOpenState: 2s
+        minimumNumberOfCalls: 3
+
+logging:
+  level:
+    ROOT: ERROR
