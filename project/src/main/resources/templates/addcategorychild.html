@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавление нового подраздела</title>
+    <link rel="stylesheet" type="text/css" href="/css/addcategorystyle.css">
+</head>
+<body>
+<form action="addcategorychild.html" th:action="@{/insertcategorychild}" th:method="POST" th:object="${insertCategoryChild}" >
+    <h2 class="h2-text-title">Добавление нового подраздела</h2>
+
+    <div class="div-row">
+        <label for="category-parent">Выберите раздел:</label>
+        <select id="category-parent" th:field="*{ownerid}">
+            <option th:each="catparent: ${category_parent}" th:value="${catparent.catid}" th:text="${catparent.catnamerus}"></option>
+        </select>
+    </div>
+
+    <div class="div-row">
+        <label for="category-parent-name-rus" style="">Введите наименование подраздела (на русском языке):</label>
+        <input id="category-parent-name-rus" name="catnamerus" type="text" th:value="*{catnamerus}">
+        <div class="errors" th:if="${#fields.hasErrors('catnamerus')}" th:errors="*{catnamerus}">Wrong book title error</div>
+    </div>
+
+    <div class="div-row">
+        <label for="category-parent-name-en">Введите наименование подраздела (на английском языке):</label>
+        <input id="category-parent-name-en" name="catnameen" type="text" th:value="*{catnameen}">
+        <div class="errors" th:if="${#fields.hasErrors('catnameen')}" th:errors="*{catnameen}">Wrong book title error</div>
+    </div>
+
+    <div class="div-row-button">
+        <button type="submit">Сохранить</button>
+        <a href="main.html" th:href="@{/}"><button type="button">Отмена</button></a>
+    </div>
+
+</form>
+</body>
+</html>

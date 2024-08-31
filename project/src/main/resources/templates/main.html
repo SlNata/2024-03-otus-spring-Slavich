@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Информационная библиотека</title>
+    <link rel="stylesheet" type="text/css" href="/css/mainstyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/headerstyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/footerstyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/paginationDataTableStyle.css">
+    <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
+</head>
+
+<body>
+<div>
+
+    <!--Шапка сайта/верхний колонтитул-->
+    <header class="header-title">
+        <div class="div-title">Электронная информационно-научная библиотека</div>
+    </header>
+    <header class="header-welcome">
+        <div class="div-welcome">Добро пожаловать на страницу администратора/пользователя!</div>
+    </header>
+
+    <!--   Основное содержимое: таблицы, списки, поиск-->
+    <div class="container">
+
+        <!-- списки-->
+        <div class="div-list-books">
+            <ul class="ul-marker">
+                <li class="li-marker text-title">
+                    <a href="main.html" th:href="@{/documentsview}">
+                        <button type="button" class="button-all-document text-title">
+                            Все документы
+                        </button>
+                    </a>
+                    <ul class="ul-marker">
+                        <li class="li-marker  text-parent" th:each="catparent,iterRow : ${category_parent}">
+                            <a class="text-a-hover text-noclick"
+                               th:text="${catparent.catnamerus} + ' / ' + ${catparent.catnameen}"
+                               th:href="${catparent.catid}"></a>
+                            <form th:action="@{/deleteparent(catid=${catparent.catid})}" th:method="DELETE">
+                                <input class="button-delete" type="submit" th:id="${iterRow.count} + ${catparent}"
+                                       value="Удалить"
+                                       onclick="return confirm(this.getAttribute('data-confirm-delete-parent'))"
+                                       th:data-confirm-delete-parent="|Вы действительно хотите удалить раздел ${catparent.catnamerus}/${catparent.catnameen} со всеми подразделами и документами?|">
+                            </form>
+                            <div>
+                                <ul class="seat ul-marker">
+                                    <li class="li-marker-child" th:each="catchild,iterSeat : ${category_child}"
+                                        th:if="${catparent.catid} == ${catchild.ownerid}">
+                                        <a class="text-a-hover text-noclick" th:href="${catchild.catid}"
+                                           th:text="${catchild.catnamerus} + ' / ' + ${catchild.catnameen}"></a>
+                                        <form th:action="@{/deletechild(catid=${catchild.catid})}" th:method="DELETE">
+                                            <input class="button-delete" type="submit" value="Удалить"
+                                                   onclick="return confirm(this.getAttribute('data-confirm-delete-child'))"
+                                                   th:data-confirm-delete-child="|Вы действительно хотите удалить подраздел ${catchild.catnamerus}/${catchild.catnameen} со всеми документами?|">
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <a href="addcategory.html" th:href="@{/insertcategoryparent}">
+                <button type="button" class="button-add-category">
+                    + Создать раздел
+                </button>
+            </a>
+            <a href="addcategory.html" th:href="@{/insertcategorychild}">
+                <button type="button" class="button-add-category">
+                    + Создать подраздел
+                </button>
+            </a>
+            <br>
+        </div>
+
+        <!-- вертикальный резделитель-->
+        <div class="vertical-line-left">
+        </div>
+
+        <!-- поиск, таблица, пагинация-->
+        <main class="main">
+
+            <!--            поиск-->
+            <div>
+                <button class="button-search" id="but-search">Расширенный поиск
+                    <span></span>
+                </button>
+
+                <form id="form-search">
+                    <table id="table-search">
+                        <thead></thead>
+                    </table>
+                    <button class="button-clear" onclick="ClearFilters()">Очистить поиск</button>
+                </form>
+            </div>
+
+            <!--            Новый документ -->
+            <div>
+                <a href="adddocument.html" th:href="@{/insertdocument}">
+                    <button type="button" class="button-add-category">
+                        + Добавить документ
+                    </button>
+                </a>
+            </div>
+
+            <div>
+                <a href="addtypedocument.html" th:href="@{/inserttypedocument}">
+                    <button type="button" class="button-add-category">
+                        + Добавить тип документа
+                    </button>
+                </a>
+            </div>
+
+            <!--            Таблица + пагинация-->
+            <div style="max-height: 100%; overflow-y: auto;">
+                <table id="pagin-table" class="display" style="width:100%">
+                    <thead>
+                    <tr>
+                        <!--<th >№</th>-->
+                        <th>Тип документа</th>
+                        <th>Наименование документа</th>
+                        <th>Автор</th>
+                        <th>Год издания</th>
+
+                        <th hidden="">Путь к файлу</th>
+                        <th hidden="">Наименование pdf файла</th>
+
+                        <th hidden="">Ключевые слова</th>
+                        <th hidden="">docid</th>
+                        <th style="border-top-right-radius: 10px; border-right:1px solid rgba(0, 0, 0, 0.3);"></th>
+                        <th hidden="">Аннотация</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="docum : ${documents}">
+                        <td th:text="${docum.typeDocument.typedocname}"></td>
+
+                        <td th:text="${docum.docname}"></td>
+                        <td th:text="${docum.docauthor}"></td>
+                        <td th:text="${docum.docyear}"></td>
+                        <!--                        -->
+                        <td hidden="" th:text="${docum.pathSavePdf.pathname}"></td>
+                        <td hidden="" th:text="${docum.docistochnik}"></td>
+
+                        <td hidden="" th:text="${docum.dockeyword}"></td>
+                        <td hidden="" th:text="${docum.docid}"></td>
+                        <td>
+                            <a th:href="@{'/editdocument/' + ${docum.docid}}" class="text-noclick text-a-hover">Редактировать</a>
+                            <br>
+                            <form th:action="@{/deletedocument(docid=${docum.docid})}" th:method="DELETE">
+                                <input class="button-delete-document" type="submit" value="Удалить"
+                                       onclick="return confirm(this.getAttribute('data-confirm-delete-document'))"
+                                       th:data-confirm-delete-document="|Вы действительно хотите удалить документ ${docum.docname}?|">
+                            </form>
+                        </td>
+                        <td hidden="" th:text="${docum.docannotation}"></td>
+                    </tr>
+                    </tbody>
+
+                    <tfoot>
+                    <tr>
+                        <th scope="col" style="width:5%; text-align: center; border: 1px solid transparent;">Тип документа</th>
+                        <th scope="col" style="width:12%; text-align: center; border: 1px solid transparent;">Наименование</th>
+                        <th scope="col" style="width:20%; text-align: center; border: 1px solid transparent;">Автор</th>
+                        <th scope="col" style="width:5%; text-align: center; border: 1px solid transparent;">Год</th>
+
+                        <th hidden="" scope="col">Путь к файлу</th>
+                        <th hidden="" scope="col">Наименование pdf файла</th>
+
+                        <th scope="col" style="width:20%; text-align: center; border: 1px solid transparent;">Ключевые
+                            слова
+                        </th>
+                        <th hidden="">docid</th>
+                        <th hidden="" scope="col">Кнопка "Удалить"</th>
+                        <th scope="col" hidden="" style="width:20%; text-align: center; border: 1px solid transparent;">
+                            Аннотация
+                        </th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </main>
+
+        <!-- Правая панель - информация о документе-->
+        <div class="div-right">
+            <div style="width: 100%; height: 50%;">
+                <hr>
+                <table style="width: 100%;">
+                    <tr style="height: 28px;">
+                        <td width="35%"><b>Год издания:</b></td>
+                        <td width="65%">
+                            <div id="year"></div>
+                        </td>
+                    </tr>
+                    <tr style="height: 40px;">
+                        <td width="45%"><b>Автор/Издательство:</b></td>
+                        <td width="55%">
+                            <div id="author"></div>
+                        </td>
+                    </tr>
+                    <tr style="height: 28px;">
+                        <td width="35%"><b>Тип документа:</b></td>
+                        <td width="65%">
+                            <div id="tdoc"></div>
+                        </td>
+                    </tr>
+                    <tr hidden="" style="height: 28px;">
+                        <td width="35%"><b>Ссылка:</b></td>
+                        <td width="65%">
+                            <div id="link"></div>
+                        </td>
+                    </tr>
+                    <tr hidden="" style="height: 28px;">
+                        <td width="35%"><b>Источник:</b></td>
+                        <td width="65%">
+                            <div id="istochnik"></div>
+                        </td>
+                    </tr>
+
+                    <tr style="height: 40px;">
+                        <td width="35%"><b>Аннотация:</b></td>
+                        <td width="65%">
+                            <details id="tannot">
+                                <summary class="sum_mark" style="display: none"></summary>
+                            </details>
+                        </td>
+                    </tr>
+
+                    <tr style="height: 40px;">
+                        <td width="35%"><b>Ключевые слова:</b></td>
+                        <td width="65%">
+                            <details id="keyword">
+                                <summary class="sum_mark">Подробнее</summary>
+                            </details>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!--    Нижний колонтитул-->
+    <footer class="footer">
+        Все права защищены &copy; Славич 2024 г.
+    </footer>
+</div>
+<script type="text/javascript" src="js/paginationDataTable.js"></script>
+<script>
+    new DataTable('#pagin-table', {
+        initComplete: function () {
+            this.api()
+                    .columns()
+                    .every(function () {
+                        let column = this;
+                        let title = column.footer().textContent;
+
+                        // Create input element
+                        let input = document.createElement('input');
+
+                        input.placeholder = title;
+                        column.footer().replaceChildren(input);
+
+                        // Event listener for user input
+                        input.addEventListener('keyup', () => {
+                            if (column.search() !== this.value) {
+                                column.search(input.value).draw();
+                            }
+                        });
+                    });
+        }
+    }
+    );
+</script>
+
+<script>
+    $('#pagin-table tfoot tr').appendTo('#table-search thead');
+</script>
+
+<script src="js/show-hide-form-search.js"></script>
+
+<script>
+    function ClearFilters() {
+        $('#form-search').val('');  // Clear ext and select inputs with classname form-control
+
+        var table = $('#pagin-table').DataTable();
+        table
+                .search('')
+                .columns().search('')
+                .draw();
+
+    }
+</script>
+
+<script src="js/selectRowDataTable.js"></script>
+<script src="js/read-pdf.js"></script>
+
+</body>
+</html>
