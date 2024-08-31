@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Стартовая страница</title>
+    <style>
+        h2 {
+            text-align: center;
+        }
+        .div-row {
+            padding-left: 20px;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        .div-row-button {
+            text-align: right;
+            bottom: 10px;
+            right: 10px;
+            position: absolute;
+        }
+    </style>
+</head>
+<body style="padding: 10% 0px 0px 40%; background-color: #f6f6f6;">
+<form th:action="@{/login}" method="post" style="border: 1px solid black; border-radius: 10px; height: 200px;
+    width: 50%; position: relative;">
+    <h2 >Пожалуйста авторизуйтесь</h2>
+
+    <div th:if="${param.error}" class="div-row">
+        <div>
+            Invalid username and password.
+        </div>
+    </div>
+    <div th:if="${param.logout}" class="div-row">
+        <div>
+            You have been logged out.
+        </div>
+    </div>
+
+    <div class="div-row">
+        <input type="text" name="username" id="username"
+               placeholder="UserName" required="true" autofocus="true"/>
+    </div>
+    <div class="div-row">
+        <input type="password" name="password" id="password"
+               placeholder="Password" required="true"/>
+    </div>
+
+    <div class="div-row-button">
+        <input type="submit" value="Войти"/>
+    </div>
+</form>
+</body>
+</html>
